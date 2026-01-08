@@ -123,9 +123,9 @@
   <body>
     <div class="header">日報入力</div>
 
-    <form method="post" action="save_nippo_time.php" id="nippoForm">
-      <input type="hidden" name="namae" id="hiddenNamae" />
-      <input type="hidden" name="nippo_date" id="hiddenDate" />
+    <form id="nippoForm">
+      <input type="hidden" id="hiddenNamae" />
+      <input type="hidden" id="hiddenDate" />
 
       <div class="container">
         <div class="info">
@@ -164,10 +164,9 @@
           <button type="button" class="btn-reset" onclick="resetForm()">
             RESET
           </button>
-          <button type="button" class="btn-submit" onclick="submitNippo()">入力</button>
-
+          <button type="button" class="btn-submit" onclick="submitNippo()">
+            入力
           </button>
-
           <button type="button" class="btn-admin" onclick="adminLogin()">
             管理人
           </button>
@@ -176,136 +175,141 @@
     </form>
 
     <script>
+      /* -----------------------------
+         MOCK DATA (GIỐNG THẬT)
+      ------------------------------*/
+
+      const mockWork = [
+        { shanaibango: "A001", hinmei: "部品加工" },
+        { shanaibango: "A002", hinmei: "研磨" },
+        { shanaibango: "A003", hinmei: "検査" },
+        { shanaibango: "A004", hinmei: "組立" },
+        { shanaibango: "A005", hinmei: "NC加工" },
+        { shanaibango: "A006", hinmei: "MC加工" },
+        { shanaibango: "A007", hinmei: "旋盤加工" },
+        { shanaibango: "A008", hinmei: "フライス加工" },
+        { shanaibango: "A009", hinmei: "仕上げ" },
+        { shanaibango: "A010", hinmei: "段取り" },
+        { shanaibango: "A011", hinmei: "測定" },
+        { shanaibango: "A012", hinmei: "バリ取り" },
+        { shanaibango: "A013", hinmei: "洗浄" },
+        { shanaibango: "A014", hinmei: "出荷準備" },
+        { shanaibango: "A015", hinmei: "材料切断" }
+      ];
+
+      const mockKikai = {
+        "冨永": ["MC-1", "MC-2", "MC-3"],
+        "遠藤": ["Lathe-1", "Lathe-2"],
+        "ダン": ["MC-4", "MC-5"],
+        "マイン": ["Lathe-3"],
+        "ダット": ["MC-6"],
+        "ヒエウ": ["MC-7"],
+        "タン": ["Lathe-4"],
+        "アン": ["MC-8"],
+        "ヴォン": ["MC-9"]
+      };
+
+      /* -----------------------------
+         TẠO 5 DÒNG TRONG BẢNG
+      ------------------------------*/
+
       const tbody = document.getElementById("tableBody");
 
       for (let i = 0; i < 5; i++) {
         tbody.insertAdjacentHTML(
           "beforeend",
           `
-    <tr>
-      <td><select class="shanaibango" name="shanai_no[]"><option></option></select></td>
-      <td><textarea class="naiyo" name="work_content[]" readonly></textarea></td>
-      <td><select class="kikai" name="kikai_name[]"><option></option></select></td>
-      <td><input type="number" name="work_hour[]" step="0.25" min="0"></td>
-    </tr>
-  `
+        <tr>
+          <td><select class="shanaibango"><option></option></select></td>
+          <td><textarea class="naiyo" readonly></textarea></td>
+          <td><select class="kikai"><option></option></select></td>
+          <td><input type="number" step="0.25" min="0"></td>
+        </tr>
+      `
         );
       }
 
-      fetch("api/get_m_work.php")
-        .then((res) => res.json())
-        .then((data) => {
-          document.querySelectorAll(".shanaibango").forEach((select) => {
-            data.forEach((row) => {
-              const o = document.createElement("option");
-              o.value = row.shanaibango;
-              o.textContent = row.shanaibango;
-              o.dataset.full = row.shanaibango + "｜" + row.hinmei;
-              select.appendChild(o);
-            });
+      /* -----------------------------
+         LOAD MOCK 社内番号
+      ------------------------------*/
 
-            select.addEventListener("mousedown", () => {
-              [...select.options].forEach(
-                (o) => o.dataset.full && (o.textContent = o.dataset.full)
-              );
-            });
-
-            select.addEventListener("change", () => {
-              [...select.options].forEach((o) => (o.textContent = o.value));
-              const found = data.find((d) => d.shanaibango === select.value);
-              select.closest("tr").querySelector(".naiyo").value = found
-                ? found.hinmei
-                : "";
-            });
-          });
+      document.querySelectorAll(".shanaibango").forEach((select) => {
+        mockWork.forEach((row) => {
+          const o = document.createElement("option");
+          o.value = row.shanaibango;
+          o.textContent = row.shanaibango;
+          o.dataset.full = row.shanaibango + "｜" + row.hinmei;
+          select.appendChild(o);
         });
 
-      function loadKikai(namae) {
-        fetch("api/get_kikai_by_name.php?namae=" + encodeURIComponent(namae))
-          .then((res) => res.json())
-          .then((data) => {
-            let opt = "<option></option>";
-            data.forEach((r) => (opt += `<option>${r.kikai_name}</option>`));
-            document
-              .querySelectorAll(".kikai")
-              .forEach((s) => (s.innerHTML = opt));
-          });
-      }
+        select.addEventListener("mousedown", () => {
+          [...select.options].forEach(
+            (o) => o.dataset.full && (o.textContent = o.dataset.full)
+          );
+        });
+
+        select.addEventListener("change", () => {
+          [...select.options].forEach((o) => (o.textContent = o.value));
+          const found = mockWork.find((d) => d.shanaibango === select.value);
+          select.closest("tr").querySelector(".naiyo").value = found
+            ? found.hinmei
+            : "";
+        });
+      });
+
+      /* -----------------------------
+         SET NAME + LOAD MOCK MÁY
+      ------------------------------*/
 
       function setName(name) {
-  const box = document.getElementById("nameBox");
-  box.innerText = name;
-  box.dataset.value = name; // ⭐ QUAN TRỌNG
+        const box = document.getElementById("nameBox");
+        box.innerText = name;
+        box.dataset.value = name;
 
-  document.getElementById("hiddenNamae").value = name;
-  loadKikai(name);
-}
+        const machines = mockKikai[name] || [];
+        let opt = "<option></option>";
+        machines.forEach((m) => (opt += `<option>${m}</option>`));
 
-     
+        document.querySelectorAll(".kikai").forEach((s) => (s.innerHTML = opt));
+      }
 
-      document.getElementById("nippoForm").addEventListener("submit", (e) => {
-        if (!hiddenNamae.value || !dateInput.value) {
-          alert("名前と日付を入力してください");
-          e.preventDefault();
-        }
-        hiddenDate.value = dateInput.value;
-      });
+      /* -----------------------------
+         SUBMIT (GIẢ LẬP)
+      ------------------------------*/
+
+      function submitNippo() {
+        const name = document.getElementById("nameBox").dataset.value;
+        const date = document.getElementById("dateInput").value;
+
+        if (!name) return alert("名前を選択してください");
+        if (!date) return alert("日付を入力してください");
+
+        const rows = [...document.querySelectorAll("#tableBody tr")].map(
+          (tr) => ({
+            shanaibango: tr.querySelector(".shanaibango").value,
+            naiyo: tr.querySelector(".naiyo").value,
+            kikai: tr.querySelector(".kikai").value,
+            hour: tr.querySelector("input").value
+          })
+        );
+
+        alert("保存成功（テストモード）\n\n" + JSON.stringify(rows, null, 2));
+      }
+
+      /* -----------------------------
+         RESET
+      ------------------------------*/
 
       function resetForm() {
         if (!confirm("リセットしますか？")) return;
-        nippoForm.reset();
-        nameBox.innerText = "";
+        document.getElementById("nippoForm").reset();
+        document.getElementById("nameBox").innerText = "";
+        document.getElementById("nameBox").dataset.value = "";
       }
 
       function adminLogin() {
         prompt("管理人パスワード");
       }
-      function submitNippo() {
-  const name = document.getElementById("nameBox").dataset.value;
-  const date = document.getElementById("dateInput").value;
-
-  if (!name) {
-    alert("名前を選択してください");
-    return;
-  }
-  if (!date) {
-    alert("日付を入力してください");
-    return;
-  }
-
-  document.getElementById("hiddenNamae").value = name;
-  document.getElementById("hiddenDate").value = date;
-
-  const form = document.getElementById("nippoForm");
-  const formData = new FormData(form);
-
-  fetch("save_nippo_time.php", {
-    method: "POST",
-    body: formData,
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      if (res.status === "ok") {
-        alert(res.msg);
-        resetForm();
-      } else {
-        alert(res.msg || "保存失敗");
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      alert("通信エラー");
-    });
-}
-
-      function resetForm() {
-  if (!confirm("リセットしますか？")) return;
-
-  document.getElementById("nippoForm").reset();
-  document.getElementById("nameBox").innerText = "";
-  document.getElementById("nameBox").dataset.value = "";
-}
-
     </script>
   </body>
 </html>
