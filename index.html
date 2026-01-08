@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>日報入力</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #9ec7e8;
+      }
+
+      .header {
+        background: linear-gradient(#e6f2ff, #9ec7e8);
+        padding: 12px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 15px;
+      }
+
+      .info {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .label {
+        background: #eee;
+        padding: 8px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .input {
+        background: #ffeaa7;
+        padding: 8px;
+        min-height: 20px;
+      }
+
+      .names {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 10px 0;
+      }
+
+      .names button {
+        padding: 6px 14px;
+        border: none;
+        background: #bfbfbf;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+      }
+
+      th,
+      td {
+        border: 2px solid #d6a200;
+        padding: 4px;
+        text-align: center;
+      }
+
+      th {
+        background: #f5e6b8;
+      }
+
+      td textarea {
+        width: 100%;
+        height: 40px;
+        background: #e8f5e3;
+        border: none;
+        resize: none;
+      }
+
+      td input,
+      td select {
+        width: 100%;
+        height: 30px;
+      }
+
+      .buttons {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .buttons button {
+        padding: 10px 22px;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+
+      .btn-reset {
+        background: #bdc3c7;
+      }
+      .btn-submit {
+        background: #f39c12;
+        color: #fff;
+      }
+      .btn-admin {
+        background: #2c3e50;
+        color: #fff;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">日報入力</div>
+
+    <form method="post" action="save_nippo_time.php" id="nippoForm">
+      <input type="hidden" name="namae" id="hiddenNamae" />
+      <input type="hidden" name="nippo_date" id="hiddenDate" />
+
+      <div class="container">
+        <div class="info">
+          <div class="label">名前</div>
+          <div class="input" id="nameBox"></div>
+
+          <div class="label">日付</div>
+          <div class="input">
+            <input type="date" id="dateInput" />
+          </div>
+        </div>
+
+        <div class="names">
+          <button type="button" onclick="setName('冨永')">冨永</button>
+          <button type="button" onclick="setName('遠藤')">遠藤</button>
+          <button type="button" onclick="setName('ダン')">ダン</button>
+          <button type="button" onclick="setName('マイン')">マイン</button>
+          <button type="button" onclick="setName('ダット')">ダット</button>
+          <button type="button" onclick="setName('ヒエウ')">ヒエウ</button>
+          <button type="button" onclick="setName('タン')">タン</button>
+          <button type="button" onclick="setName('アン')">アン</button>
+          <button type="button" onclick="setName('ヴォン')">ヴォン</button>
+        </div>
+
+        <table>
+          <tr>
+            <th>社内番号</th>
+            <th>内容</th>
+            <th>機械</th>
+            <th>時間</th>
+          </tr>
+          <tbody id="tableBody"></tbody>
+        </table>
+
+        <div class="buttons">
+          <button type="button" class="btn-reset" onclick="resetForm()">
+            RESET
+          </button>
+          <button type="button" class="btn-submit" onclick="submitNippo()">入力</button>
+
+          </button>
+
+          <button type="button" class="btn-admin" onclick="adminLogin()">
+            管理人
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <script>
+      const tbody = document.getElementById("tableBody");
+
+      for (let i = 0; i < 5; i++) {
+        tbody.insertAdjacentHTML(
+          "beforeend",
+          `
+    <tr>
+      <td><select class="shanaibango" name="shanai_no[]"><option></option></select></td>
+      <td><textarea class="naiyo" name="work_content[]" readonly></textarea></td>
+      <td><select class="kikai" name="kikai_name[]"><option></option></select></td>
+      <td><input type="number" name="work_hour[]" step="0.25" min="0"></td>
+    </tr>
+  `
+        );
+      }
+
+      fetch("api/get_m_work.php")
+        .then((res) => res.json())
+        .then((data) => {
+          document.querySelectorAll(".shanaibango").forEach((select) => {
+            data.forEach((row) => {
+              const o = document.createElement("option");
+              o.value = row.shanaibango;
+              o.textContent = row.shanaibango;
+              o.dataset.full = row.shanaibango + "｜" + row.hinmei;
+              select.appendChild(o);
+            });
+
+            select.addEventListener("mousedown", () => {
+              [...select.options].forEach(
+                (o) => o.dataset.full && (o.textContent = o.dataset.full)
+              );
+            });
+
+            select.addEventListener("change", () => {
+              [...select.options].forEach((o) => (o.textContent = o.value));
+              const found = data.find((d) => d.shanaibango === select.value);
+              select.closest("tr").querySelector(".naiyo").value = found
+                ? found.hinmei
+                : "";
+            });
+          });
+        });
+
+      function loadKikai(namae) {
+        fetch("api/get_kikai_by_name.php?namae=" + encodeURIComponent(namae))
+          .then((res) => res.json())
+          .then((data) => {
+            let opt = "<option></option>";
+            data.forEach((r) => (opt += `<option>${r.kikai_name}</option>`));
+            document
+              .querySelectorAll(".kikai")
+              .forEach((s) => (s.innerHTML = opt));
+          });
+      }
+
+      function setName(name) {
+  const box = document.getElementById("nameBox");
+  box.innerText = name;
+  box.dataset.value = name; // ⭐ QUAN TRỌNG
+
+  document.getElementById("hiddenNamae").value = name;
+  loadKikai(name);
+}
+
+     
+
+      document.getElementById("nippoForm").addEventListener("submit", (e) => {
+        if (!hiddenNamae.value || !dateInput.value) {
+          alert("名前と日付を入力してください");
+          e.preventDefault();
+        }
+        hiddenDate.value = dateInput.value;
+      });
+
+      function resetForm() {
+        if (!confirm("リセットしますか？")) return;
+        nippoForm.reset();
+        nameBox.innerText = "";
+      }
+
+      function adminLogin() {
+        prompt("管理人パスワード");
+      }
+      function submitNippo() {
+  const name = document.getElementById("nameBox").dataset.value;
+  const date = document.getElementById("dateInput").value;
+
+  if (!name) {
+    alert("名前を選択してください");
+    return;
+  }
+  if (!date) {
+    alert("日付を入力してください");
+    return;
+  }
+
+  document.getElementById("hiddenNamae").value = name;
+  document.getElementById("hiddenDate").value = date;
+
+  const form = document.getElementById("nippoForm");
+  const formData = new FormData(form);
+
+  fetch("save_nippo_time.php", {
+    method: "POST",
+    body: formData,
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.status === "ok") {
+        alert(res.msg);
+        resetForm();
+      } else {
+        alert(res.msg || "保存失敗");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("通信エラー");
+    });
+}
+
+      function resetForm() {
+  if (!confirm("リセットしますか？")) return;
+
+  document.getElementById("nippoForm").reset();
+  document.getElementById("nameBox").innerText = "";
+  document.getElementById("nameBox").dataset.value = "";
+}
+
+    </script>
+  </body>
+</html>
