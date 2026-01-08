@@ -1,315 +1,263 @@
 <!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>日報入力</title>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tính Lương Nhật Bản</title>
 
-    <style>
-      body {
-        margin: 0;
-        font-family: "Segoe UI", sans-serif;
-        background: #9ec7e8;
-      }
+<style>
+:root{
+  --main:#4CAF50;
+  --bg:#f4f6f8;
+  --card:#ffffff;
+  --text:#333;
+}
 
-      .header {
-        background: linear-gradient(#e6f2ff, #9ec7e8);
-        padding: 12px;
-        text-align: center;
-        font-size: 28px;
-        font-weight: bold;
-      }
+*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;}
+body{
+  background:var(--bg);
+  margin:0;
+  padding:15px;
+  color:var(--text);
+}
 
-      .container {
-        max-width: 1200px;
-        margin: auto;
-        padding: 15px;
-      }
+/* ===== Header ===== */
+header{
+  background:linear-gradient(135deg,#43a047,#66bb6a);
+  color:#fff;
+  padding:22px 15px;
+  border-radius:16px;
+  text-align:center;
+  margin-bottom:16px;
+}
+header h1{
+  margin:0;
+  font-size:1.5em;
+}
+header p{
+  margin-top:6px;
+  font-size:0.9em;
+  opacity:0.9;
+}
 
-      .info {
-        display: grid;
-        grid-template-columns: 100px 1fr;
-        gap: 8px;
-        margin-bottom: 10px;
-      }
+/* ===== Card ===== */
+.card{
+  background:var(--card);
+  border-radius:16px;
+  padding:16px;
+  box-shadow:0 6px 15px rgba(0,0,0,0.08);
+  max-width:480px;
+  margin:0 auto;
+}
 
-      .label {
-        background: #eee;
-        padding: 8px;
-        text-align: center;
-        font-weight: bold;
-      }
+.section-title{
+  font-weight:600;
+  margin:10px 0 8px;
+  font-size:0.95em;
+  color:#555;
+}
 
-      .input {
-        background: #ffeaa7;
-        padding: 8px;
-        min-height: 20px;
-      }
+.input-group{
+  margin-bottom:12px;
+}
+.input-group label{
+  font-size:0.85em;
+  color:#666;
+  margin-bottom:4px;
+  display:block;
+}
+.input-group input{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  font-size:1em;
+}
 
-      .names {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin: 10px 0;
-      }
+/* ===== Checkbox ===== */
+.checkbox-group{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:10px;
+}
+.checkbox-group label{
+  font-size:0.85em;
+}
 
-      .names button {
-        padding: 6px 14px;
-        border: none;
-        background: #bfbfbf;
-        border-radius: 4px;
-        cursor: pointer;
-      }
+/* ===== Button ===== */
+button{
+  width:100%;
+  padding:14px;
+  background:var(--main);
+  border:none;
+  border-radius:14px;
+  font-size:1.1em;
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:16px;
+}
+button:active{
+  transform:scale(0.98);
+}
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #fff;
-      }
+/* ===== Result ===== */
+.result{
+  margin-top:18px;
+  background:#f1f8f3;
+  border-radius:14px;
+  padding:14px;
+  display:none;
+}
+.result h2{
+  font-size:1.1em;
+  margin-bottom:10px;
+}
+.result-item{
+  display:flex;
+  justify-content:space-between;
+  font-size:0.95em;
+  margin:6px 0;
+}
+.result-total{
+  font-size:1.2em;
+  font-weight:700;
+  margin-top:10px;
+  color:#2e7d32;
+}
 
-      th,
-      td {
-        border: 2px solid #d6a200;
-        padding: 4px;
-        text-align: center;
-      }
+/* ===== Footer ===== */
+footer{
+  text-align:center;
+  font-size:0.75em;
+  color:#777;
+  margin-top:18px;
+}
+</style>
+</head>
 
-      th {
-        background: #f5e6b8;
-      }
+<body>
 
-      td textarea {
-        width: 100%;
-        height: 40px;
-        background: #e8f5e3;
-        border: none;
-        resize: none;
-      }
+<header>
+  <h1>💴 TÍNH LƯƠNG TẠI NHẬT</h1>
+  <p>Nhanh · Dễ · Chuẩn luật lao động</p>
+</header>
 
-      td input,
-      td select {
-        width: 100%;
-        height: 30px;
-      }
+<div class="card">
 
-      .buttons {
-        margin-top: 15px;
-        display: flex;
-        gap: 10px;
-      }
+  <div class="section-title">Thông tin cơ bản</div>
 
-      .buttons button {
-        padding: 10px 22px;
-        border: none;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 5px;
-      }
+  <div class="input-group">
+    <label>Lương giờ (円)</label>
+    <input type="number" id="base" placeholder="VD: 1200">
+  </div>
 
-      .btn-reset {
-        background: #bdc3c7;
-      }
-      .btn-submit {
-        background: #f39c12;
-        color: #fff;
-      }
-      .btn-admin {
-        background: #2c3e50;
-        color: #fff;
-      }
-    </style>
-  </head>
+  <div class="input-group">
+    <label>Số ngày làm trong tháng</label>
+    <input type="number" id="days" value="22">
+  </div>
 
-  <body>
-    <div class="header">日報入力</div>
+  <div class="section-title">Giờ làm TRUNG BÌNH / NGÀY</div>
 
-    <form id="nippoForm">
-      <input type="hidden" id="hiddenNamae" />
-      <input type="hidden" id="hiddenDate" />
+  <div class="input-group">
+    <label>Giờ thường</label>
+    <input type="number" id="normal" value="8">
+  </div>
 
-      <div class="container">
-        <div class="info">
-          <div class="label">名前</div>
-          <div class="input" id="nameBox"></div>
+  <div class="input-group">
+    <label>OT 125%</label>
+    <input type="number" id="ot125" value="0">
+  </div>
 
-          <div class="label">日付</div>
-          <div class="input">
-            <input type="date" id="dateInput" />
-          </div>
-        </div>
+  <div class="input-group">
+    <label>OT >60h (150%)</label>
+    <input type="number" id="ot150" value="0">
+  </div>
 
-        <div class="names">
-          <button type="button" onclick="setName('冨永')">冨永</button>
-          <button type="button" onclick="setName('遠藤')">遠藤</button>
-          <button type="button" onclick="setName('ダン')">ダン</button>
-          <button type="button" onclick="setName('マイン')">マイン</button>
-          <button type="button" onclick="setName('ダット')">ダット</button>
-          <button type="button" onclick="setName('ヒエウ')">ヒエウ</button>
-          <button type="button" onclick="setName('タン')">タン</button>
-          <button type="button" onclick="setName('アン')">アン</button>
-          <button type="button" onclick="setName('ヴォン')">ヴォン</button>
-        </div>
+  <div class="input-group">
+    <label>Ca đêm (22:00–05:00)</label>
+    <input type="number" id="night" value="0">
+  </div>
 
-        <table>
-          <tr>
-            <th>社内番号</th>
-            <th>内容</th>
-            <th>機械</th>
-            <th>時間</th>
-          </tr>
-          <tbody id="tableBody"></tbody>
-        </table>
+  <div class="input-group">
+    <label>Ngày lễ</label>
+    <input type="number" id="holiday" value="0">
+  </div>
 
-        <div class="buttons">
-          <button type="button" class="btn-reset" onclick="resetForm()">
-            RESET
-          </button>
-          <button type="button" class="btn-submit" onclick="submitNippo()">
-            入力
-          </button>
-          <button type="button" class="btn-admin" onclick="adminLogin()">
-            管理人
-          </button>
-        </div>
-      </div>
-    </form>
+  <div class="section-title">Khấu trừ (ước tính)</div>
 
-    <script>
-      /* -----------------------------
-         MOCK DATA (GIỐNG THẬT)
-      ------------------------------*/
+  <div class="checkbox-group">
+    <label><input type="checkbox" id="insurance"> BH xã hội</label>
+    <label><input type="checkbox" id="unemployment"> BH thất nghiệp</label>
+    <label><input type="checkbox" id="tax"> Thuế</label>
+  </div>
 
-      const mockWork = [
-        { shanaibango: "A001", hinmei: "部品加工" },
-        { shanaibango: "A002", hinmei: "研磨" },
-        { shanaibango: "A003", hinmei: "検査" },
-        { shanaibango: "A004", hinmei: "組立" },
-        { shanaibango: "A005", hinmei: "NC加工" },
-        { shanaibango: "A006", hinmei: "MC加工" },
-        { shanaibango: "A007", hinmei: "旋盤加工" },
-        { shanaibango: "A008", hinmei: "フライス加工" },
-        { shanaibango: "A009", hinmei: "仕上げ" },
-        { shanaibango: "A010", hinmei: "段取り" },
-        { shanaibango: "A011", hinmei: "測定" },
-        { shanaibango: "A012", hinmei: "バリ取り" },
-        { shanaibango: "A013", hinmei: "洗浄" },
-        { shanaibango: "A014", hinmei: "出荷準備" },
-        { shanaibango: "A015", hinmei: "材料切断" }
-      ];
+  <button onclick="calc()">TÍNH LƯƠNG THÁNG</button>
 
-      const mockKikai = {
-        "冨永": ["MC-1", "MC-2", "MC-3"],
-        "遠藤": ["Lathe-1", "Lathe-2"],
-        "ダン": ["MC-4", "MC-5"],
-        "マイン": ["Lathe-3"],
-        "ダット": ["MC-6"],
-        "ヒエウ": ["MC-7"],
-        "タン": ["Lathe-4"],
-        "アン": ["MC-8"],
-        "ヴォン": ["MC-9"]
-      };
+  <div class="result" id="result">
+    <h2>Kết quả</h2>
 
-      /* -----------------------------
-         TẠO 5 DÒNG TRONG BẢNG
-      ------------------------------*/
+    <div class="result-item"><span>Lương trước thuế</span><span id="gross">0</span></div>
+    <div class="result-item"><span>OT</span><span id="otPay">0</span></div>
+    <div class="result-item"><span>Ca đêm</span><span id="nightPay">0</span></div>
+    <div class="result-item"><span>Khấu trừ</span><span id="deduct">0</span></div>
 
-      const tbody = document.getElementById("tableBody");
+    <div class="result-total">
+      Thực nhận: <span id="net">0</span> 円
+    </div>
+  </div>
 
-      for (let i = 0; i < 5; i++) {
-        tbody.insertAdjacentHTML(
-          "beforeend",
-          `
-        <tr>
-          <td><select class="shanaibango"><option></option></select></td>
-          <td><textarea class="naiyo" readonly></textarea></td>
-          <td><select class="kikai"><option></option></select></td>
-          <td><input type="number" step="0.25" min="0"></td>
-        </tr>
-      `
-        );
-      }
+</div>
 
-      /* -----------------------------
-         LOAD MOCK 社内番号
-      ------------------------------*/
+<footer>
+  * Kết quả chỉ mang tính tham khảo theo luật lao động Nhật Bản
+</footer>
 
-      document.querySelectorAll(".shanaibango").forEach((select) => {
-        mockWork.forEach((row) => {
-          const o = document.createElement("option");
-          o.value = row.shanaibango;
-          o.textContent = row.shanaibango;
-          o.dataset.full = row.shanaibango + "｜" + row.hinmei;
-          select.appendChild(o);
-        });
+<script>
+function calc(){
+  const base = +baseInput();
+  const days = +get("days");
+  const normal = +get("normal");
+  const ot125 = +get("ot125");
+  const ot150 = +get("ot150");
+  const night = +get("night");
+  const holiday = +get("holiday");
 
-        select.addEventListener("mousedown", () => {
-          [...select.options].forEach(
-            (o) => o.dataset.full && (o.textContent = o.dataset.full)
-          );
-        });
+  const daily =
+    base*normal +
+    base*1.25*ot125 +
+    base*1.5*ot150 +
+    base*1.25*night +
+    base*1.35*holiday;
 
-        select.addEventListener("change", () => {
-          [...select.options].forEach((o) => (o.textContent = o.value));
-          const found = mockWork.find((d) => d.shanaibango === select.value);
-          select.closest("tr").querySelector(".naiyo").value = found
-            ? found.hinmei
-            : "";
-        });
-      });
+  const gross = daily * days;
 
-      /* -----------------------------
-         SET NAME + LOAD MOCK MÁY
-      ------------------------------*/
+  let deduct = 0;
+  if (insurance.checked) deduct += gross*0.15;
+  if (unemployment.checked) deduct += gross*0.015;
+  if (tax.checked) deduct += gross*0.05;
 
-      function setName(name) {
-        const box = document.getElementById("nameBox");
-        box.innerText = name;
-        box.dataset.value = name;
+  const net = gross - deduct;
 
-        const machines = mockKikai[name] || [];
-        let opt = "<option></option>";
-        machines.forEach((m) => (opt += `<option>${m}</option>`));
+  document.getElementById("result").style.display="block";
+  grossEl().textContent = format(gross);
+  otPay.textContent = format((base*1.25*ot125 + base*1.5*ot150)*days);
+  nightPay.textContent = format(base*1.25*night*days);
+  deductEl().textContent = format(deduct);
+  netEl().textContent = format(net);
+}
 
-        document.querySelectorAll(".kikai").forEach((s) => (s.innerHTML = opt));
-      }
+function get(id){ return document.getElementById(id).value||0 }
+function baseInput(){ return document.getElementById("base").value||0 }
+function grossEl(){ return document.getElementById("gross") }
+function deductEl(){ return document.getElementById("deduct") }
+function netEl(){ return document.getElementById("net") }
 
-      /* -----------------------------
-         SUBMIT (GIẢ LẬP)
-      ------------------------------*/
+function format(n){
+  return Math.round(n).toLocaleString();
+}
+</script>
 
-      function submitNippo() {
-        const name = document.getElementById("nameBox").dataset.value;
-        const date = document.getElementById("dateInput").value;
-
-        if (!name) return alert("名前を選択してください");
-        if (!date) return alert("日付を入力してください");
-
-        const rows = [...document.querySelectorAll("#tableBody tr")].map(
-          (tr) => ({
-            shanaibango: tr.querySelector(".shanaibango").value,
-            naiyo: tr.querySelector(".naiyo").value,
-            kikai: tr.querySelector(".kikai").value,
-            hour: tr.querySelector("input").value
-          })
-        );
-
-        alert("保存成功（テストモード）\n\n" + JSON.stringify(rows, null, 2));
-      }
-
-      /* -----------------------------
-         RESET
-      ------------------------------*/
-
-      function resetForm() {
-        if (!confirm("リセットしますか？")) return;
-        document.getElementById("nippoForm").reset();
-        document.getElementById("nameBox").innerText = "";
-        document.getElementById("nameBox").dataset.value = "";
-      }
-
-      function adminLogin() {
-        prompt("管理人パスワード");
-      }
-    </script>
-  </body>
+</body>
 </html>
