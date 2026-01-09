@@ -12,128 +12,59 @@
   --card:#ffffff;
   --text:#333;
 }
-
 *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;}
-body{
-  background:var(--bg);
-  margin:0;
-  padding:15px;
-  color:var(--text);
-}
+body{background:var(--bg);margin:0;padding:15px;color:var(--text);}
 
-/* ===== Header ===== */
 header{
   background:linear-gradient(135deg,#43a047,#66bb6a);
-  color:#fff;
-  padding:22px 15px;
-  border-radius:16px;
-  text-align:center;
-  margin-bottom:16px;
+  color:#fff;padding:22px;border-radius:16px;text-align:center;margin-bottom:16px;
 }
-header h1{
-  margin:0;
-  font-size:1.5em;
-}
-header p{
-  margin-top:6px;
-  font-size:0.9em;
-  opacity:0.9;
-}
-
-/* ===== Card ===== */
 .card{
-  background:var(--card);
-  border-radius:16px;
-  padding:16px;
-  box-shadow:0 6px 15px rgba(0,0,0,0.08);
-  max-width:480px;
-  margin:0 auto;
+  background:#fff;border-radius:16px;padding:16px;
+  box-shadow:0 6px 15px rgba(0,0,0,.08);
+  max-width:520px;margin:auto;
 }
+.section-title{font-weight:600;margin:14px 0 6px;color:#555;}
+.input-group{margin-bottom:12px;}
+.input-group label{font-size:.85em;color:#666;display:block;margin-bottom:4px;}
+.input-group input{width:100%;padding:10px;border-radius:10px;border:1px solid #ddd;}
 
-.section-title{
-  font-weight:600;
-  margin:10px 0 8px;
-  font-size:0.95em;
-  color:#555;
-}
+.checkbox-group{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 
-.input-group{
-  margin-bottom:12px;
-}
-.input-group label{
-  font-size:0.85em;
-  color:#666;
-  margin-bottom:4px;
-  display:block;
-}
-.input-group input{
-  width:100%;
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid #ddd;
-  font-size:1em;
-}
-
-/* ===== Checkbox ===== */
-.checkbox-group{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:10px;
-}
-.checkbox-group label{
-  font-size:0.85em;
-}
-
-/* ===== Button ===== */
 button{
-  width:100%;
-  padding:14px;
-  background:var(--main);
-  border:none;
-  border-radius:14px;
-  font-size:1.1em;
-  color:#fff;
-  font-weight:600;
-  cursor:pointer;
-  margin-top:16px;
-}
-button:active{
-  transform:scale(0.98);
+  width:100%;padding:14px;background:var(--main);
+  border:none;border-radius:14px;font-size:1.1em;
+  color:#fff;font-weight:600;margin-top:14px;cursor:pointer;
 }
 
-/* ===== Result ===== */
-.result{
-  margin-top:18px;
-  background:#f1f8f3;
-  border-radius:14px;
-  padding:14px;
-  display:none;
-}
-.result h2{
-  font-size:1.1em;
-  margin-bottom:10px;
-}
-.result-item{
-  display:flex;
-  justify-content:space-between;
-  font-size:0.95em;
-  margin:6px 0;
-}
-.result-total{
-  font-size:1.2em;
-  font-weight:700;
-  margin-top:10px;
-  color:#2e7d32;
+.result{display:none;margin-top:18px;background:#f1f8f3;border-radius:14px;padding:14px;}
+table{width:100%;border-collapse:collapse;font-size:.9em;}
+th,td{padding:6px;border-bottom:1px solid #ddd;text-align:right;}
+th{text-align:left;color:#555;}
+.total{font-size:1.2em;font-weight:700;color:#2e7d32;text-align:right;margin-top:10px;}
+
+footer{text-align:center;font-size:.75em;color:#777;margin-top:16px;}
+  @media print{
+  body{
+    background:#fff;
+    padding:0;
+  }
+  header,
+  button,
+  .input-group,
+  .checkbox-group,
+  footer{
+    display:none !important;
+  }
+  .card{
+    box-shadow:none;
+    max-width:100%;
+  }
+  .result{
+    display:block !important;
+  }
 }
 
-/* ===== Footer ===== */
-footer{
-  text-align:center;
-  font-size:0.75em;
-  color:#777;
-  margin-top:18px;
-}
 </style>
 </head>
 
@@ -141,140 +72,110 @@ footer{
 
 <header>
   <h1>💴 TÍNH LƯƠNG TẠI NHẬT</h1>
-  <p>Nhanh · Dễ · Chuẩn luật lao động</p>
+  <p>OT nhập là tổng giờ trong tháng</p>
 </header>
 
 <div class="card">
 
-  <div class="section-title">Thông tin cơ bản</div>
+<div class="section-title">Thông tin</div>
+<div class="input-group">
+  <label>Lương giờ (円)</label>
+  <input id="base" type="number" value="1200">
+</div>
+<div class="input-group">
+  <label>Số ngày làm</label>
+  <input id="days" type="number" value="22">
+</div>
+<div class="input-group">
+  <label>Giờ thường / ngày</label>
+  <input id="normal" type="number" value="8">
+</div>
 
-  <div class="input-group">
-    <label>Lương giờ (円)</label>
-    <input type="number" id="base" placeholder="VD: 1200">
-  </div>
+<div class="section-title">Giờ trong tháng</div>
+<div class="input-group"><label>OT 125%</label><input id="ot125" type="number" value="0"></div>
+<div class="input-group"><label>OT 150%</label><input id="ot150" type="number" value="0"></div>
+<div class="input-group"><label>Ca đêm</label><input id="night" type="number" value="0"></div>
+<div class="input-group"><label>Ngày lễ</label><input id="holiday" type="number" value="0"></div>
 
-  <div class="input-group">
-    <label>Số ngày làm trong tháng</label>
-    <input type="number" id="days" value="22">
-  </div>
+<div class="section-title">Khấu trừ</div>
+<div class="checkbox-group">
+  <label><input type="checkbox" id="insurance"> BH xã hội</label>
+  <label><input type="checkbox" id="unemployment"> BH thất nghiệp</label>
+  <label><input type="checkbox" id="tax"> Thuế</label>
+</div>
 
-  <div class="section-title">Giờ làm TRUNG BÌNH / NGÀY</div>
+<button onclick="calc()">TÍNH LƯƠNG</button>
+<button onclick="printPDF()" style="background:#2196F3;margin-top:8px;">
+  📄 LƯU / IN PDF
+</button>
 
-  <div class="input-group">
-    <label>Giờ thường</label>
-    <input type="number" id="normal" value="8">
-  </div>
-
-  <div class="input-group">
-    <label>OT 125%</label>
-    <input type="number" id="ot125" value="0">
-  </div>
-
-  <div class="input-group">
-    <label>OT >60h (150%)</label>
-    <input type="number" id="ot150" value="0">
-  </div>
-
-  <div class="input-group">
-    <label>Ca đêm (22:00–05:00)</label>
-    <input type="number" id="night" value="0">
-  </div>
-
-  <div class="input-group">
-    <label>Ngày lễ</label>
-    <input type="number" id="holiday" value="0">
-  </div>
-
-  <div class="section-title">Khấu trừ (ước tính)</div>
-
-  <div class="checkbox-group">
-    <label><input type="checkbox" id="insurance"> BH xã hội</label>
-    <label><input type="checkbox" id="unemployment"> BH thất nghiệp</label>
-    <label><input type="checkbox" id="tax"> Thuế</label>
-  </div>
-
-  <button onclick="calc()">TÍNH LƯƠNG THÁNG</button>
-
-  <div class="result" id="result">
-    <h2>Kết quả</h2>
-
-    <div class="result-item"><span>Lương trước thuế</span><span id="gross">0</span></div>
-    <div class="result-item"><span>OT</span><span id="otPay">0</span></div>
-    <div class="result-item"><span>Ca đêm</span><span id="nightPay">0</span></div>
-    <div class="result-item"><span>Khấu trừ</span><span id="deduct">0</span></div>
-
-    <div class="result-total">
-      Thực nhận: <span id="net">0</span> 円
-    </div>
-  </div>
+<div class="result" id="result">
+  <h3>BẢNG LƯƠNG CHI TIẾT</h3>
+  <table>
+    <tr><th>Lương thường</th><td id="normalPay">0</td></tr>
+    <tr><th>OT</th><td id="otPay">0</td></tr>
+    <tr><th>Ca đêm</th><td id="nightPay">0</td></tr>
+    <tr><th>Ngày lễ</th><td id="holidayPay">0</td></tr>
+    <tr><th>Khấu trừ</th><td id="deduct">0</td></tr>
+  </table>
+  <div class="total">Thực nhận: <span id="net">0</span> 円</div>
+</div>
 
 </div>
 
-<footer>
-  * Kết quả chỉ mang tính tham khảo theo luật lao động Nhật Bản
-</footer>
+<footer>* Tham khảo luật lao động Nhật</footer>
 
 <script>
 function calc(){
-  const base     = +baseInput();   // lương giờ
-  const days     = +get("days");   // số ngày làm
-  const normal   = +get("normal"); // giờ thường / ngày
+  const base = +v("base");
+  const days = +v("days");
+  const normal = +v("normal");
 
-  // các mục dưới đây là TỔNG GIỜ TRONG THÁNG
-  const ot125    = +get("ot125");
-  const ot150    = +get("ot150");
-  const night    = +get("night");
-  const holiday  = +get("holiday");
+  const ot125 = +v("ot125");
+  const ot150 = +v("ot150");
+  const night = +v("night");
+  const holiday = +v("holiday");
 
-  /* ===== LƯƠNG TRƯỚC THUẾ ===== */
-
-  // Lương giờ thường trong tháng
   const normalPay = base * normal * days;
-
-  // OT
-  const ot125Pay = base * 1.25 * ot125;
-  const ot150Pay = base * 1.5  * ot150;
-
-  // Ca đêm & ngày lễ
-  const nightPay   = base * 1.25 * night;
+  const otPay = base * 1.25 * ot125 + base * 1.5 * ot150;
+  const nightPay = base * 1.25 * night;
   const holidayPay = base * 1.35 * holiday;
 
-  // Tổng trước thuế
-  const gross =
-    normalPay +
-    ot125Pay +
-    ot150Pay +
-    nightPay +
-    holidayPay;
+  const gross = normalPay + otPay + nightPay + holidayPay;
 
-  /* ===== KHẤU TRỪ ===== */
   let deduct = 0;
-  if (insurance.checked)     deduct += gross * 0.15;
+  if (insurance.checked) deduct += gross * 0.15;
   if (unemployment.checked) deduct += gross * 0.015;
-  if (tax.checked)           deduct += gross * 0.05;
+  if (tax.checked) deduct += gross * 0.05;
 
   const net = gross - deduct;
 
-  /* ===== HIỂN THỊ ===== */
-  document.getElementById("result").style.display = "block";
-
-  grossEl().textContent  = format(gross);
-  otPay.textContent     = format(ot125Pay + ot150Pay);
-  nightPayEl().textContent = format(nightPay);
-  deductEl().textContent = format(deduct);
-  netEl().textContent    = format(net);
+  result.style.display="block";
+  normalPayEl.textContent = f(normalPay);
+  otPayEl.textContent = f(otPay);
+  nightPayEl.textContent = f(nightPay);
+  holidayPayEl.textContent = f(holidayPay);
+  deductEl.textContent = f(deduct);
+  netEl.textContent = f(net);
 }
-function get(id){ return document.getElementById(id).value||0 }
-function baseInput(){ return document.getElementById("base").value||0 }
-function grossEl(){ return document.getElementById("gross") }
-function deductEl(){ return document.getElementById("deduct") }
-function netEl(){ return document.getElementById("net") }
+const v=id=>document.getElementById(id).value||0;
+const f=n=>Math.round(n).toLocaleString();
 
-function format(n){
-  return Math.round(n).toLocaleString();
+const normalPayEl=document.getElementById("normalPay");
+const otPayEl=document.getElementById("otPay");
+const nightPayEl=document.getElementById("nightPay");
+const holidayPayEl=document.getElementById("holidayPay");
+const deductEl=document.getElementById("deduct");
+const netEl=document.getElementById("net");
+  function printPDF(){
+  if (result.style.display !== "block") {
+    alert("Vui lòng tính lương trước khi lưu PDF");
+    return;
+  }
+  window.print();
 }
+
 </script>
 
 </body>
 </html>
-
