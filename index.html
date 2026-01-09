@@ -216,38 +216,54 @@ footer{
 
 <script>
 function calc(){
-  const base = +baseInput();
-  const days = +get("days");
-  const normal = +get("normal");
-  const ot125 = +get("ot125");
-  const ot150 = +get("ot150");
-  const night = +get("night");
-  const holiday = +get("holiday");
+  const base     = +baseInput();   // lương giờ
+  const days     = +get("days");   // số ngày làm
+  const normal   = +get("normal"); // giờ thường / ngày
 
-  const daily =
-    base*normal +
-    base*1.25*ot125 +
-    base*1.5*ot150 +
-    base*1.25*night +
-    base*1.35*holiday;
+  // các mục dưới đây là TỔNG GIỜ TRONG THÁNG
+  const ot125    = +get("ot125");
+  const ot150    = +get("ot150");
+  const night    = +get("night");
+  const holiday  = +get("holiday");
 
-  const gross = daily * days;
+  /* ===== LƯƠNG TRƯỚC THUẾ ===== */
 
+  // Lương giờ thường trong tháng
+  const normalPay = base * normal * days;
+
+  // OT
+  const ot125Pay = base * 1.25 * ot125;
+  const ot150Pay = base * 1.5  * ot150;
+
+  // Ca đêm & ngày lễ
+  const nightPay   = base * 1.25 * night;
+  const holidayPay = base * 1.35 * holiday;
+
+  // Tổng trước thuế
+  const gross =
+    normalPay +
+    ot125Pay +
+    ot150Pay +
+    nightPay +
+    holidayPay;
+
+  /* ===== KHẤU TRỪ ===== */
   let deduct = 0;
-  if (insurance.checked) deduct += gross*0.15;
-  if (unemployment.checked) deduct += gross*0.015;
-  if (tax.checked) deduct += gross*0.05;
+  if (insurance.checked)     deduct += gross * 0.15;
+  if (unemployment.checked) deduct += gross * 0.015;
+  if (tax.checked)           deduct += gross * 0.05;
 
   const net = gross - deduct;
 
-  document.getElementById("result").style.display="block";
-  grossEl().textContent = format(gross);
-  otPay.textContent = format((base*1.25*ot125 + base*1.5*ot150)*days);
-  nightPay.textContent = format(base*1.25*night*days);
-  deductEl().textContent = format(deduct);
-  netEl().textContent = format(net);
-}
+  /* ===== HIỂN THỊ ===== */
+  document.getElementById("result").style.display = "block";
 
+  grossEl().textContent  = format(gross);
+  otPay.textContent     = format(ot125Pay + ot150Pay);
+  nightPayEl().textContent = format(nightPay);
+  deductEl().textContent = format(deduct);
+  netEl().textContent    = format(net);
+}
 function get(id){ return document.getElementById(id).value||0 }
 function baseInput(){ return document.getElementById("base").value||0 }
 function grossEl(){ return document.getElementById("gross") }
@@ -261,3 +277,4 @@ function format(n){
 
 </body>
 </html>
+
